@@ -51,7 +51,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def run_telegram_bot():
 
-    TOKEN = "8573643441:AAFLHmDGeFUq_StmT3nTNRk_OtqRS2rTinQ"
+    TOKEN = ""
 
     app = ApplicationBuilder().token(TOKEN).build()
 
