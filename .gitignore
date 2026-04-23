@@ -1,0 +1,63 @@
+# 🐍 Python
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Entornos virtuales
+
+venv/
+.env/
+.envrc
+.venv/
+
+# Variables de entorno
+
+.env
+.env.*
+
+# Archivos de sistema
+
+.DS_Store
+Thumbs.db
+
+# IDEs / editores
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+
+*.log
+
+# Archivos temporales
+
+*.tmp
+*.temp
+
+# Streamlit config local (opcional ignorar si es sensible)
+
+.streamlit/secrets.toml
+
+# Base de datos (si usas SQLite)
+
+*.db
+*.sqlite3
+
+# Archivos de pruebas / cache
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter (por si acaso)
+
+.ipynb_checkpoints/
+
+# Archivos de build
+
+build/
+dist/
+*.egg-info/
