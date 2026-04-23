@@ -1,6 +1,8 @@
 from core.intents import detectar_intencion
-from data.repository import crear_ticket, obtener_recursos, guardar_log, validar_codigo
+from data.repository import crear_ticket, obtener_recursos, guardar_log, validar_codigo, obtener_usuario_por_codigo, vincular_chat_id, actualizar_step, obtener_usuario_por_chat,logout_usuario, actualizar_last_active
 import streamlit as st
+from core.session import sesion_expirada
+from services.telegram_menu import menu_principal
 
 if "chat_step" not in st.session_state:
     st.session_state.chat_step = "bienvenida"
@@ -62,6 +64,12 @@ def responder_normal(pregunta):
 
     elif intent == "certificado":
         return "📄 Solicitud registrada"
+    
+    if intent == "asignaturas":
+        return "📋 Las asignaturas que tienes asignadas para este periodo son:\n\n•Matemáticas \n• Español \n• Inglés \n• Ciencias Naturales \n• Sociales \n• Ética \n• Informática \n• Educación Física"
+
+    if intent == "actividades":
+        return "✔️ Las actividades que tienes asignadas son:\n\n•Matemáticas: Función cuadrática (Entregar el lunes)\n\n•Español: Análisis literario (Entregar el miércoles)\n\n•Inglés: Vocabulario (Entregar el viernes) \n\n•Salidas pedagogicas: Excursion a la biblioteca municipal (24 de octubre)"
 
     elif intent == "falla":
         ticket_id = crear_ticket(
@@ -81,3 +89,91 @@ def responder_normal(pregunta):
         return f"📚 Recursos:\n{r}"
 
     return "🤖 No entendí tu solicitud"
+
+def responder_telegram(texto, chat_id):
+
+    texto = texto.strip()
+
+    # 🔴 1. LOGOUT GLOBAL
+    if texto.lower() in ["logout", "salir", "cerrar sesión", "cerrar sesion"]:
+        user = obtener_usuario_por_chat(chat_id)
+
+        if user:
+            codigo = user[0]
+            logout_usuario(codigo)
+            return (
+                "👋 Sesión cerrada correctamente.\n\n"
+                "¡Hola! Bienvenido al Asistente Educativo Institucional 🎓\n\n"
+                "Para poder ayudarte con información personalizada, "
+                "por favor ingresa tu código estudiantil."
+            )
+
+        return "No tienes sesión activa."
+
+    # 🔍 2. BUSCAR USUARIO POR CHAT_ID
+    user = obtener_usuario_por_chat(chat_id)
+
+    # 🔥 3. SI NO EXISTE → INICIAR FLUJO
+    if not user:
+
+        # 👉 SI EL MENSAJE PARECE CÓDIGO
+        posible_user = obtener_usuario_por_codigo(texto)
+
+        if not posible_user:
+            return "❌ Código no válido. Verifica con secretaría."
+        
+        codigo, nombre, chat_id_db, step = posible_user
+
+        # 🔐 VALIDAR SUPLANTACIÓN
+        if chat_id_db and chat_id_db != chat_id:
+            return "🚫 Este código ya está vinculado a otro dispositivo."
+
+        # ✔ vincular usuario
+        vincular_chat_id(codigo, chat_id)
+        actualizar_step(codigo, "privacidad")
+
+        return f"✅ Hola {nombre}.\n\nPara continuar, acepta el tratamiento de datos personales escribiendo SI."
+
+        # 👉 PRIMER CONTACTO (SALUDO)
+        return (
+            "¡Hola! 👋 Bienvenido al Asistente Educativo Institucional 🎓\n\n"
+            "Para poder ayudarte con información personalizada, "
+            "por favor ingresa tu código estudiantil."
+        )
+
+    # 📦 4. USUARIO YA EXISTE
+    codigo, nombre, step, last_active = user   
+
+    # 🔄 6. ACTUALIZAR ACTIVIDAD
+    actualizar_last_active(codigo)
+
+    # 🔐 7. PRIVACIDAD
+    if step == "privacidad":
+
+        if texto.lower() in ["si", "sí"]:
+            actualizar_step(codigo, "chat_activo")
+            return f"🔓 Acceso concedido, {nombre}."
+            
+        return "Debes aceptar los términos para continuar (responde SI)"
+
+    # 💬 8. CHAT NORMAL
+    if step == "chat_activo":
+        if sesion_expirada(last_active):
+            logout_usuario(codigo)
+            return "⏳ Tu sesión expiró. Ingresa nuevamente tu código."
+        return responder_normal(texto)   
+        
+        
+        if texto == "🚪 Salir":
+            user = obtener_usuario_por_chat(chat_id)
+
+            if user:
+                logout_usuario(user[0])
+
+            return (
+                "👋 Sesión cerrada.\n\n"
+                "¡Hola! Bienvenido al Asistente Educativo 🎓\n"
+                "Ingresa tu código estudiantil:"
+            )
+
+    return "🤖 Iniciando..."

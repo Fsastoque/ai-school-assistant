@@ -11,7 +11,10 @@ def init_db():
         codigo TEXT PRIMARY KEY,
         nombre TEXT,
         grado TEXT,
-        acepto_terminos INTEGER
+        acepto_terminos INTEGER,
+        chat_id TEXT,
+        chat_step TEXT DEFAULT 'bienvenida',
+        last_active TIMESTAMP
     )
     """)
 
@@ -77,7 +80,6 @@ def init_db():
         c.execute("""
         INSERT INTO usuarios (codigo, nombre, grado, acepto_terminos)
         VALUES ('28288', 'Carlos Perez', '10', 1)
-        """)    
-
+        """)   
     conn.commit()
     conn.close()

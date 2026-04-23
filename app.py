@@ -15,7 +15,6 @@ st.set_page_config(page_title="Portal Escolar | Institución Educativa", layout=
 # --- 2. CSS GLOBAL ---
 st.markdown("""
 <style>
-
 /* HEADER */
 .nav-header {
     background: linear-gradient(90deg, #003366 0%, #0055aa 100%);
@@ -227,6 +226,14 @@ def abrir_admin():
 
 # --- 4. HEADER ---
 st.markdown('''
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#003366">
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+}
+</script>
 <div class="nav-header">
     <h1>PORTAL EDUCATIVO INSTITUCIONAL</h1>
     <p>Excelencia, Valores y Tecnología</p>
