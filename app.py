@@ -1,6 +1,13 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
+from core.security import validar_usuario
+from services.analytics_service import obtener_logs
+from core.chatbot import responder
+
+# Inicializar base de datos si no existe
+from data.init_db import init_db
+init_db()
 
 # --- 1. CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="Portal Escolar | Institución Educativa", layout="wide")
@@ -129,6 +136,8 @@ if st.session_state.admin_logueado:
     st.success("🔓 Admin activo")
 if "abrir_admin" not in st.session_state:
     st.session_state.abrir_admin = False
+if "abrir_chat" not in st.session_state:
+    st.session_state.abrir_chat = False
 
     
 
@@ -138,23 +147,30 @@ def toggle_menu():
 # --- FUNCIÓN MODAL CHATBOT ---
 @st.dialog("🤖 Asistente Virtual")
 def abrir_chatbot():
+    if "chat_historial" not in st.session_state:
+        st.session_state.chat_historial = []
+    if not st.session_state.chat_historial:
+        saludo = responder("")  # dispara bienvenida
+        st.session_state.chat_historial.append(f"🤖 {saludo}")   
 
-    st.write("Hola, soy tu asistente. ¿En qué puedo ayudarte?")  
+    for msg in st.session_state.chat_historial:
+        st.write(msg)
 
-    pregunta = st.text_input("Escribe tu pregunta")
-
-    if pregunta:
-        if "horario" in pregunta.lower():
-            st.success("📅 Tu horario es de 7:00am a 1:00pm")
-
-        elif "notas" in pregunta.lower():
-            st.info("📊 Tus notas estarán disponibles el 15 de mayo")
-
-        elif "ruta" in pregunta.lower():
-            st.warning("🚌 Tu ruta llega a las 6:30am")
-
-        else:
-            st.write("🤖 Estoy aprendiendo, intenta otra pregunta")
+    with st.form("chat_form", clear_on_submit=True):
+        pregunta = st.text_input("Escribe tu mensaje")
+        enviado = st.form_submit_button("Enviar")
+        if enviado and pregunta:
+            st.session_state.chat_historial.append(f"👤 {pregunta}")
+            respuesta = responder(pregunta)
+            st.session_state.chat_historial.append(f"🤖 {respuesta}")
+            st.session_state.abrir_chat = True
+            st.rerun()
+        #st.session_state.chat_historial.append(f"👤 {pregunta}")
+        #respuesta = responder(pregunta)
+        #st.session_state.chat_historial.append(f"🤖 {respuesta}")        
+        #st.session_state.abrir_chat = True
+        #st.rerun()
+        
 
 # --- FUNCIÓN MODAL PANEL ADMINISTRATIVO ---
 @st.dialog("🔐 Panel Administrativo")
@@ -256,7 +272,7 @@ with col_der:
         """, unsafe_allow_html=True)
 
         if st.button("📚 Chatbot"):
-            abrir_chatbot()            
+            abrir_chatbot()           
 
         if st.button("🔐 Panel administrativo"):
             abrir_admin()
@@ -267,30 +283,9 @@ with col_der:
             st.session_state.abrir_admin = False
             abrir_admin()
 
-# --- 6. BOTÓN FLOTANTE ---
-'''col1, col2 = st.columns([8, 1])
-
-with col2:    
-    with st.popover("💬 Chat"):
-        st.caption("Haz clic fuera para cerrar")
-        st.markdown("""
-        <div style='text-align:center'>
-            <h3 style='color:#003366;'>🤖 Asistencia Digital</h3>
-            <p style='font-size:14px;color:gray;'>¿En qué puedo ayudarte?</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        if st.button("📚 Chatbot"):
-            abrir_chatbot()            
-
-        if st.button("🔐 Panel administrativo"):
-            abrir_admin()
-
-        st.divider()
-
-        if st.session_state.abrir_admin:
-            st.session_state.abrir_admin = False
-            abrir_admin()'''
+        if st.session_state.abrir_chat:
+            st.session_state.abrir_chat = False
+            abrir_chatbot()
 
 # --- 8. VISTAS ---
 if st.session_state.vista == "chat":
