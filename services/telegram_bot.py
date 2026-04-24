@@ -3,17 +3,17 @@ from core.session import sesion_expirada
 from core.chatbot import responder_normal
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-from services.telegram_menu import menu_principal
+from services.telegram_menu import menu_principal, menu_horarios
 from handlers.callbacks import button_handler
 from telegram.ext import CallbackQueryHandler
-
+import datetime
 
 # 🔥 Estado por usuario (clave)
 user_states = {}
 
 def responder_telegram(texto, chat_id):
     texto = texto.strip().lower()
-
+    
     # 🔴 1. LOGOUT GLOBAL
     if texto in ["logout", "salir", "cerrar sesión", "cerrar sesion"]:
         user = obtener_usuario_por_chat(chat_id)
@@ -73,8 +73,40 @@ def responder_telegram(texto, chat_id):
             logout_usuario(codigo)
             return "⏳ Tu sesión expiró. Ingresa nuevamente tu código."
 
+        if "horario hoy" in texto:
+            dia = datetime.datetime.now().strftime("%A")
+
+            horarios = {
+                "Monday": "📅 *Lunes*\n🕒 Matemáticas\n🕒 Lengua\n🕒 Inglés",
+                "Tuesday": "📅 *Martes*\n🕒 Química\n🕒 Matemáticas\n🕒 Sociales",
+                "Wednesday": "📅 *Miércoles*\n🕒 Lengua\n🕒 Biología\n🕒 Matemáticas",
+                "Thursday": "📅 *Jueves*\n🕒 Física\n🕒 Química\n🕒 Inglés",
+                "Friday": "📅 *Viernes*\n🕒 Biología\n🕒 Matemáticas \n🕒 Lenguaje \n🕒 Ética \n🕒 Deporte"
+            }
+
+            return f"""
+            📆 *HORARIO DE HOY*
+            ━━━━━━━━━━━━━━━
+                {horarios.get(dia, "Hoy no hay clases")}
+            ━━━━━━━━━━━━━━━
+            """
+
+        if "horario semana" in texto:
+            return """
+            🗓 *HORARIO SEMANAL – GRADO 10°*
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━
+                 Hora  | Lunes   | Martes   | Miércoles | Jueves  | Viernes
+
+                07:00  | Matem   | Química  | Lengua    | Física   | Biología
+                08:00  | Lengua  | Matem    | Biología  | Química  | Matem
+                09:00  | Inglés  | Sociales | Matem     | Inglés   | Lengua
+                10:00  | Física  | Inglés   | Filosofía | Sociales | Ética
+                11:00  | Ed. Fís | Tecnol   | Artes     | Tecnol   | Deporte
+                ━━━━━━━━━━━━━━━━━━━━━━━━━━
+            """
+        
         # 👉 aquí va tu lógica real
-        return responder_normal(texto)
+        return responder_normal(texto, "telegram", chat_id)
 
     return "🤖 Iniciando..."
 
@@ -100,9 +132,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user:
         codigo, nombre, step, _ = user
 
-    if step == "chat_activo":
-        await update.message.reply_text(respuesta + "\n\n👇 Selecciona una opción:", reply_markup=menu_principal())
-        return
+        if step == "chat_activo":
+            await update.message.reply_text(respuesta + "\n\n👇 Selecciona una opción:", reply_markup=menu_principal())
+            return
 
     '''if "Acceso concedido" in respuesta: 
         await update.message.reply_text( respuesta, reply_markup=menu_principal() )
@@ -113,7 +145,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def run_telegram_bot():
 
-    TOKEN = ""
+    TOKEN = "8573643441:AAFLHmDGeFUq_StmT3nTNRk_OtqRS2rTinQ"
 
     app = ApplicationBuilder().token(TOKEN).build()
 

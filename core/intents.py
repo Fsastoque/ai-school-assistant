@@ -10,6 +10,9 @@ def detectar_intencion(texto):
     if "certificado" in t:
         return "certificado"
 
+    if "constancia" in t  or "estudio" in t:
+        return "constancia_estudio"
+
     if "falla" in t or "problema" in t:
         return "falla"
 

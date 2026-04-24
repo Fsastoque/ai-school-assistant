@@ -49,10 +49,10 @@ def responder(pregunta):
         # Aquí llamas tu lógica anterior
         return responder_normal(pregunta)    
 
-def responder_normal(pregunta):
+def responder_normal(pregunta, canal="web", chat_id=None):
 
     intent = detectar_intencion(pregunta)
-    guardar_log(pregunta, intent)
+    guardar_log(pregunta, intent)    
 
     if intent == "horario":
         return "📅 Tu horario es de 7:00am a 1:00pm"
@@ -61,21 +61,41 @@ def responder_normal(pregunta):
         return "📌 Reunión de padres viernes 4pm"
 
     elif intent == "certificado":
-        return "📄 Solicitud registrada"
+        return  """
+            📄 *Certificado de estudio*
+            ━━━━━━━━━━━━━━━
+            🔗 Descárgalo aquí:
+            https://drive.google.com/file/d/1AEZVUJlmXaZGvQBPUDs03VSKXojotsKa/view?usp=drive_link
+            ━━━━━━━━━━━━━━━
+            """
+    
+    elif intent == "constancia_estudio":
+        return  """
+            📘 *Constancia de estudio*
+            ━━━━━━━━━━━━━━━
+            🔗 Descárgalo aquí:
+            https://drive.google.com/file/d/1SMV2ExwSaLbVK6jWJcHgwI2lH9k3z0_5/view?usp=drive_link
+            ━━━━━━━━━━━━━━━
+            """
     
     if intent == "asignaturas":
-        return "📋 Las asignaturas que tienes asignadas para este periodo son:\n\n•Matemáticas \n• Español \n• Inglés \n• Ciencias Naturales \n• Sociales \n• Ética \n• Informática \n• Educación Física"
+        return "📋 Las asignaturas que tienes asignadas para este periodo son:\n\n•Matemáticas \n• Lenguaje \n• Inglés \n• Quimica \n• Física \n• Ética \n• Deporte \n• Educación Física"
 
     if intent == "actividades":
         return "✔️ Las actividades que tienes asignadas son:\n\n•Matemáticas: Función cuadrática (Entregar el lunes)\n\n•Español: Análisis literario (Entregar el miércoles)\n\n•Inglés: Vocabulario (Entregar el viernes) \n\n•Salidas pedagogicas: Excursion a la biblioteca municipal (24 de octubre)"
 
     elif intent == "falla":
+        codigo = obtener_codigo_usuario(canal, chat_id)
+        if not codigo:
+            return "🔐 Debes iniciar sesión"
+
         ticket_id = crear_ticket(
-            st.session_state.codigo_estudiante,
+            codigo,
             "falla",
             pregunta
         )
-        return f"🛠️ Ticket #{ticket_id} creado"
+
+        return f"🛠️ Ticket #{ticket_id} creado correctamente"
 
     elif intent == "recursos":
         recursos = obtener_recursos()
@@ -87,3 +107,12 @@ def responder_normal(pregunta):
         return f"📚 Recursos:\n{r}"
 
     return "🤖 No entendí tu solicitud"
+
+def obtener_codigo_usuario(canal, chat_id=None):
+
+    if canal == "telegram":
+        user = obtener_usuario_por_chat(chat_id)
+        return user[0] if user else None
+
+    elif canal == "web":
+        return st.session_state.get("codigo_estudiante")
