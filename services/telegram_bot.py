@@ -101,7 +101,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         codigo, nombre, step, _ = user
 
     if step == "chat_activo":
-        await update.message.reply_text(respuesta + "\n\n👇 Selecciona una opción:", reply_markup=menu_principal(),parse_mode="Markdown")
+        await update.message.reply_text(respuesta + "\n\n👇 Selecciona una opción:", reply_markup=menu_principal())
         return
 
     '''if "Acceso concedido" in respuesta: 
