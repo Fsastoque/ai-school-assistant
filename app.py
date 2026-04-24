@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import sqlite3
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from core.security import validar_usuario
 from services.analytics_service import obtener_logs
 from core.chatbot import responder
