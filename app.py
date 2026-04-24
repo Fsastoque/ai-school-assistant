@@ -150,7 +150,7 @@ def abrir_chatbot():
         st.session_state.chat_historial = []
     if not st.session_state.chat_historial:
         saludo = responder("")  # dispara bienvenida
-        st.session_state.chat_historial.append(f"🤖 {saludo}")   
+        st.session_state.chat_historial.append(f"{saludo}")   
 
     for msg in st.session_state.chat_historial:
         st.write(msg)
