@@ -129,3 +129,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data == "admin":
         await query.edit_message_text("🔐 Panel administrativo (próximamente)")
         return
+    
+    # LOGOUT
+    if data == "salir":
+        respuesta = services.telegram_bot.responder_telegram("salir", chat_id)
+        await query.edit_message_text(respuesta)
+        return  
