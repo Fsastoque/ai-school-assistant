@@ -137,7 +137,12 @@ if "abrir_admin" not in st.session_state:
     st.session_state.abrir_admin = False
 if "abrir_chat" not in st.session_state:
     st.session_state.abrir_chat = False
-
+if "chat_step" not in st.session_state:
+    st.session_state.chat_step = "bienvenida"
+if "codigo_estudiante" not in st.session_state:
+    st.session_state.codigo_estudiante = None
+if "nombre_usuario" not in st.session_state:
+    st.session_state.nombre_usuario = None
     
 
 def toggle_menu():

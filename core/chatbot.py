@@ -1,7 +1,7 @@
 from core.intents import detectar_intencion
 from data.repository import crear_ticket, obtener_recursos, guardar_log, validar_codigo, obtener_usuario_por_codigo, vincular_chat_id, actualizar_step, obtener_usuario_por_chat,logout_usuario, actualizar_last_active
 import streamlit as st
-from utils.tarjeta_mensaje import tarjeta
+from services.telegram_menu import menu_principal
 
 if "chat_step" not in st.session_state:
     st.session_state.chat_step = "bienvenida"
@@ -55,7 +55,7 @@ def responder_normal(pregunta):
     guardar_log(pregunta, intent)
 
     if intent == "horario":
-        return "🕒 Tu horario es de 7:00am a 1:00pm"       
+        return "📅 Tu horario es de 7:00am a 1:00pm"
 
     elif intent == "eventos":
         return "📌 Reunión de padres viernes 4pm"
