@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from core.security import validar_usuario
 from services.analytics_service import obtener_logs
 from core.chatbot import responder
+from ui.admin_ui import grafica_temas_consultados
 
 # Inicializar base de datos si no existe
 from data.init_db import init_db
@@ -201,24 +202,9 @@ def abrir_admin():
 
     # --- DASHBOARD ---
     else:
-        st.markdown("### 📊 Dashboard Administrativo")
-        st.caption("Panel de control institucional")
-
-        col1, col2, col3 = st.columns(3)
-
-        col1.metric("👥 Estudiantes", "320")
-        col2.metric("📚 Cursos", "18")
-        col3.metric("🚌 Rutas", "12")
-
-        st.markdown("---")
-
-        st.markdown("#### 📌 Acciones rápidas")
-
-        if st.button("📄 Ver reportes"):
-            st.info("Generando reporte académico...")
-
-        if st.button("👨‍🎓 Gestionar estudiantes"):
-            st.success("Módulo de estudiantes abierto")
+        st.markdown("### 📉 Dashboard Administrativo")
+        
+        grafica_temas_consultados()        
 
         if st.button("📢 Publicar aviso"):
             aviso = st.text_input("Escribe el aviso")
