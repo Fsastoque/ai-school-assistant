@@ -106,6 +106,8 @@ def responder_normal(pregunta, canal="web", chat_id=None):
         r = "\n".join([f"{x[0]}: {x[1]}" for x in recursos])
         return f"📚 Recursos:\n{r}"
 
+    guardar_log(pregunta, intent)    
+
     return "🤖 No entendí tu solicitud"
 
 def obtener_codigo_usuario(canal, chat_id=None):

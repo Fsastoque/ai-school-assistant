@@ -30,3 +30,39 @@ def abrir_admin():
     plt.plot(horas.index, horas.values)
     plt.title("Horas pico")
     st.pyplot(fig2)
+
+    # 🔥 Asegurar formato fecha
+    df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+
+    # ==================================================
+    # 📊 GRÁFICA 1: TEMAS MÁS CONSULTADOS
+    # ==================================================
+    st.subheader("📌 Temas más consultados")
+    grafica_temas_consultados()
+
+def grafica_temas_consultados():
+
+    df = obtener_logs()
+
+    # 🔐 validar
+    if df.empty:
+        st.warning("No hay datos aún")
+        return
+
+    st.subheader("📊 Temas más consultados")
+
+    # 🔥 contar intenciones
+    conteo = df['intencion'].value_counts()
+
+    # 📈 gráfica
+    fig, ax = plt.subplots()
+    ax.bar(conteo.index, conteo.values)
+
+    ax.set_title("Consultas por tema")
+    ax.set_xlabel("Tema")
+    ax.set_ylabel("Cantidad")
+
+    # 🔥 importante: rotar etiquetas
+    plt.xticks(rotation=30)
+
+    st.pyplot(fig)

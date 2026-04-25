@@ -74,12 +74,13 @@ def responder_telegram(texto, chat_id):
             return "⏳ Tu sesión expiró. Ingresa nuevamente tu código."
 
         if "horario hoy" in texto:
-            dia = datetime.datetime.now().strftime("%A")
+            #dia = datetime.datetime.now().strftime("%A")
+            dia = "Friday"
 
             horarios = {
-                "Monday": "📅 *Lunes*\n🕒 Matemáticas\n🕒 Lengua\n🕒 Inglés",
+                "Monday": "📅 *Lunes*\n🕒 Matemáticas\n🕒 Lenguaje\n🕒 Inglés",
                 "Tuesday": "📅 *Martes*\n🕒 Química\n🕒 Matemáticas\n🕒 Sociales",
-                "Wednesday": "📅 *Miércoles*\n🕒 Lengua\n🕒 Biología\n🕒 Matemáticas",
+                "Wednesday": "📅 *Miércoles*\n🕒 Lenguaje\n🕒 Biología\n🕒 Matemáticas",
                 "Thursday": "📅 *Jueves*\n🕒 Física\n🕒 Química\n🕒 Inglés",
                 "Friday": "📅 *Viernes*\n🕒 Biología\n🕒 Matemáticas \n🕒 Lenguaje \n🕒 Ética \n🕒 Deporte"
             }
@@ -93,17 +94,45 @@ def responder_telegram(texto, chat_id):
 
         if "horario semana" in texto:
             return """
-            🗓 *HORARIO SEMANAL – GRADO 10°*
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━
-                 Hora  | Lunes   | Martes   | Miércoles | Jueves  | Viernes
+           🗓 *HORARIO SEMANAL – GRADO 10°*
+━━━━━━━━━━━━━━━
+📅 *Lunes*
+🕒 07:00 - Matemáticas  
+🕒 08:00 - Lengua Castellana  
+🕒 09:00 - Inglés  
+🕒 10:00 - Física  
+🕒 11:00 - Educación Física  
 
-                07:00  | Matem   | Química  | Lengua    | Física   | Biología
-                08:00  | Lengua  | Matem    | Biología  | Química  | Matem
-                09:00  | Inglés  | Sociales | Matem     | Inglés   | Lengua
-                10:00  | Física  | Inglés   | Filosofía | Sociales | Ética
-                11:00  | Ed. Fís | Tecnol   | Artes     | Tecnol   | Deporte
-                ━━━━━━━━━━━━━━━━━━━━━━━━━━
-            """
+📅 *Martes*
+🕒 07:00 - Química  
+🕒 08:00 - Matemáticas  
+🕒 09:00 - Sociales  
+🕒 10:00 - Inglés  
+🕒 11:00 - Tecnología  
+
+📅 *Miércoles*
+🕒 07:00 - Lengua Castellana  
+🕒 08:00 - Biología  
+🕒 09:00 - Matemáticas  
+🕒 10:00 - Filosofía  
+🕒 11:00 - Artes  
+
+📅 *Jueves*
+🕒 07:00 - Física  
+🕒 08:00 - Química  
+🕒 09:00 - Inglés  
+🕒 10:00 - Sociales  
+🕒 11:00 - Tecnología  
+
+📅 *Viernes*
+🕒 07:00 - Biología  
+🕒 08:00 - Matemáticas  
+🕒 09:00 - Lengua Castellana  
+🕒 10:00 - Ética  
+🕒 11:00 - Deportes
+━━━━━━━━━━━━━━━
+👇 Selecciona otra opción
+"""
         
         # 👉 aquí va tu lógica real
         return responder_normal(texto, "telegram", chat_id)

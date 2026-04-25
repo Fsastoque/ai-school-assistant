@@ -182,7 +182,6 @@ def abrir_chatbot():
 # --- FUNCIÓN MODAL PANEL ADMINISTRATIVO ---
 @st.dialog("🔐 Panel Administrativo")
 def abrir_admin():
-
      # --- LOGIN ---
     if not st.session_state.admin_logueado:
 
@@ -198,7 +197,7 @@ def abrir_admin():
                 st.session_state.abrir_admin = True
                 st.rerun()
             else:
-                st.error("❌ Credenciales incorrectas")
+                st.error("❌ Credenciales incorrectas")        
 
     # --- DASHBOARD ---
     else:
